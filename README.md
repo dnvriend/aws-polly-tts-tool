@@ -1,189 +1,450 @@
 # aws-polly-tts-tool
 
-[![Python Version](https://img.shields.io/badge/python-3.14+-blue.svg)](https://www.python.org/downloads/)
+[![Python Version](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
 [![Type checked: mypy](https://img.shields.io/badge/type%20checked-mypy-blue.svg)](https://github.com/python/mypy)
-[![AI Generated](https://img.shields.io/badge/AI-Generated-blueviolet.svg)](https://www.anthropic.com/claude)
 [![Built with Claude Code](https://img.shields.io/badge/Built_with-Claude_Code-5A67D8.svg)](https://www.anthropic.com/claude/code)
 
-A CLI that provides TTS using Amazon Polly
+Professional AWS Polly TTS CLI and library for text-to-speech synthesis with agent-friendly design.
 
 ## Table of Contents
 
 - [About](#about)
+- [Why CLI-First?](#why-cli-first)
 - [Features](#features)
 - [Installation](#installation)
+- [Configuration](#configuration)
 - [Usage](#usage)
+  - [Basic Synthesis](#basic-synthesis)
+  - [Voice Selection](#voice-selection)
+  - [Engine Selection](#engine-selection)
+  - [SSML Support](#ssml-support)
+  - [Cost Tracking](#cost-tracking)
+- [Library Usage](#library-usage)
+- [Commands](#commands)
+- [Known Issues](#known-issues)
 - [Development](#development)
-- [Testing](#testing)
-- [Contributing](#contributing)
+- [Resources](#resources)
 - [License](#license)
-- [Author](#author)
 
 ## About
 
-`aws-polly-tts-tool` is a Python CLI tool built with modern tooling and best practices.
+`aws-polly-tts-tool` is a comprehensive CLI tool and Python library for Amazon Polly text-to-speech synthesis. Built with a CLI-first philosophy, it provides both command-line convenience and programmatic access to AWS Polly's full feature set.
+
+### What is Amazon Polly?
+
+[Amazon Polly](https://aws.amazon.com/polly/) is AWS's fully-managed text-to-speech service that converts text into lifelike speech using deep learning. It offers 60+ voices in 30+ languages with multiple quality tiers.
+
+### Why This Tool?
+
+- **Agent-Friendly**: Designed for Claude Code and AI agents with self-documenting help and structured errors
+- **Composable**: JSON output to stdout, logs to stderr - perfect for Unix piping
+- **Dual-Mode**: Use as CLI or import as Python library
+- **Production-Ready**: Type-safe, tested, linted with comprehensive error handling
+- **Cost-Transparent**: Real-time cost estimates and AWS billing integration
+
+## Why CLI-First?
+
+This tool prioritizes CLI design to enable:
+
+- 🤖 **AI Agent Integration**: Claude Code and other AI tools can use structured commands and parse outputs
+- 🔄 **ReAct Loops**: Clear error messages help agents self-correct and retry operations
+- 🔗 **Composability**: Standard Unix patterns (stdin/stdout/stderr) enable piping and automation
+- 🧱 **Building Blocks**: Commands serve as reusable components for skills, MCP servers, and scripts
+- 📊 **Predictability**: Type-safe implementation ensures consistent behavior in automated workflows
 
 ## Features
 
-- ✅ Type-safe with mypy strict mode
-- ✅ Linted with ruff
-- ✅ Tested with pytest
-- ✅ Modern Python tooling (uv, mise, click)
+### Voice Engines
+- ✅ **Standard** - Cost-effective traditional TTS ($4/1M chars)
+- ✅ **Neural** - Natural, human-like voices ($16/1M chars)
+- ✅ **Generative** - Most advanced, emotionally engaged ($30/1M chars)
+- ✅ **Long-form** - Optimized for audiobooks ($100/1M chars)
+
+### Voice Selection
+- 📢 60+ voices across 30+ languages
+- 🔍 Dynamic fetching from Polly API (always up-to-date)
+- 🎚️ Filter by engine, language, gender
+- 🌍 Multiple accents and speaking styles
+
+### Output Options
+- 🎵 **mp3** - General purpose (default)
+- 🎶 **ogg_vorbis** - Open format for web
+- 🎙️ **pcm** - Raw audio, lowest latency
+
+### Advanced Features
+- 📝 Full SSML support (prosody, breaks, emphasis, phonemes)
+- 💰 Dual cost tracking (estimates + AWS Cost Explorer)
+- 📊 Billing queries with engine breakdown
+- 🔐 AWS environment variable authentication
+- 📤 Stdin support for piping
 
 ## Installation
 
 ### Prerequisites
 
-- Python 3.14 or higher
-- [uv](https://github.com/astral-sh/uv) package manager
+- **Python 3.12+** (Python 3.13+ has pydub compatibility issues - see [Known Issues](#known-issues))
+- [uv](https://github.com/astral-sh/uv) package manager (recommended)
+- AWS credentials configured
+- **ffmpeg** (for audio playback - not required for file output)
 
-### Install from source
+> **Note**: For a detailed explanation of how the TTS pipeline works and why these dependencies are needed, see [TTS Pipeline Architecture](references/tts-pipeline.md)
 
-```bash
-# Clone the repository
-git clone https://github.com/dnvriend/aws-polly-tts-tool.git
-cd aws-polly-tts-tool
-
-# Install globally with uv
-uv tool install .
-```
-
-### Install with mise (recommended for development)
-
-```bash
-cd aws-polly-tts-tool
-mise trust
-mise install
-uv sync
-uv tool install .
-```
-
-### Verify installation
-
-```bash
-aws-polly-tts-tool --version
-```
-
-## Usage
-
-### Basic Usage
-
-```bash
-# Show help
-aws-polly-tts-tool --help
-
-# Run the tool
-aws-polly-tts-tool
-```
-
-## Development
-
-### Setup Development Environment
+### Install from Source
 
 ```bash
 # Clone repository
 git clone https://github.com/dnvriend/aws-polly-tts-tool.git
 cd aws-polly-tts-tool
 
-# Install dependencies
-make install
+# Install with uv (Python 3.12)
+uv tool install . --python 3.12
 
-# Show available commands
-make help
+# Verify installation
+aws-polly-tts-tool --version
 ```
 
-### Available Make Commands
+### Install with mise (Development)
 
 ```bash
-make install          # Install dependencies
-make format           # Format code with ruff
-make lint             # Run linting with ruff
-make typecheck        # Run type checking with mypy
-make test             # Run tests with pytest
-make check            # Run all checks (lint, typecheck, test)
-make pipeline         # Run full pipeline (format, lint, typecheck, test, build, install-global)
-make build            # Build package
-make run ARGS="..."   # Run aws-polly-tts-tool locally
-make clean            # Remove build artifacts
+cd aws-polly-tts-tool
+mise use python@3.12
+uv sync
+uv tool install .
 ```
 
-### Project Structure
+## Configuration
+
+### AWS Credentials
+
+Configure AWS credentials using any of these methods:
+
+```bash
+# Method 1: AWS CLI configuration
+aws configure
+
+# Method 2: Environment variables
+export AWS_ACCESS_KEY_ID="your-access-key"
+export AWS_SECRET_ACCESS_KEY="your-secret-key"
+export AWS_DEFAULT_REGION="us-east-1"
+
+# Verify credentials
+aws-polly-tts-tool info
+```
+
+### IAM Permissions Required
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "polly:DescribeVoices",
+        "polly:SynthesizeSpeech"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["ce:GetCostAndUsage"],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+## Usage
+
+### Basic Synthesis
+
+```bash
+# Play text with default voice (Joanna, neural engine)
+aws-polly-tts-tool synthesize "Hello world"
+
+# Save to file instead of playing
+aws-polly-tts-tool synthesize "Hello world" --output speech.mp3
+
+# Read from stdin
+echo "Hello world" | aws-polly-tts-tool synthesize --stdin
+
+# Read from file
+cat article.txt | aws-polly-tts-tool synthesize --stdin --output article.mp3
+```
+
+### Voice Selection
+
+```bash
+# List all available voices
+aws-polly-tts-tool list-voices
+
+# Filter by language
+aws-polly-tts-tool list-voices --language en-US
+
+# Filter by engine and gender
+aws-polly-tts-tool list-voices --engine neural --gender Female
+
+# Use specific voice
+aws-polly-tts-tool synthesize "Hello" --voice Matthew
+aws-polly-tts-tool synthesize "Bonjour" --voice Celine  # French
+```
+
+### Engine Selection
+
+```bash
+# List all engines with pricing
+aws-polly-tts-tool list-engines
+
+# Use standard engine (cheapest)
+aws-polly-tts-tool synthesize "Hello" --engine standard
+
+# Use neural engine (recommended)
+aws-polly-tts-tool synthesize "Hello" --engine neural
+
+# Use generative engine (highest quality)
+aws-polly-tts-tool synthesize "Hello" --engine generative
+
+# Use long-form for audiobooks
+aws-polly-tts-tool synthesize "$(cat book.txt)" --engine long-form --output book.mp3
+```
+
+### SSML Support
+
+```bash
+# Basic SSML with pauses
+aws-polly-tts-tool synthesize '<speak>Hello <break time="500ms"/> world</speak>' --ssml
+
+# Prosody control (speed, pitch, volume)
+aws-polly-tts-tool synthesize '<speak><prosody rate="slow" pitch="low">Deep voice</prosody></speak>' --ssml
+
+# Emphasis
+aws-polly-tts-tool synthesize '<speak>I <emphasis level="strong">really</emphasis> like this</speak>' --ssml
+
+# Newscaster style (select voices only)
+aws-polly-tts-tool synthesize '<speak><amazon:domain name="news">Breaking news today</amazon:domain></speak>' --ssml --voice Matthew
+```
+
+### Cost Tracking
+
+```bash
+# Show cost estimate after synthesis
+aws-polly-tts-tool synthesize "Hello world" --show-cost
+
+# View pricing for all engines
+aws-polly-tts-tool pricing
+
+# Query AWS billing (last 30 days)
+aws-polly-tts-tool billing
+
+# Custom date range
+aws-polly-tts-tool billing --start-date 2025-01-01 --end-date 2025-01-31
+
+# Last 7 days
+aws-polly-tts-tool billing --days 7
+```
+
+## Library Usage
+
+Import and use as a Python library:
+
+```python
+from aws_polly_tts_tool import (
+    get_polly_client,
+    synthesize_audio,
+    save_speech,
+    VoiceManager,
+    calculate_cost,
+)
+
+# Initialize client
+client = get_polly_client(region="us-east-1")
+
+# Synthesize audio
+audio_bytes, char_count = synthesize_audio(
+    client=client,
+    text="Hello world",
+    voice_id="Joanna",
+    output_format="mp3",
+    engine="neural"
+)
+
+# Save to file
+save_speech(
+    client=client,
+    text="Hello world",
+    voice_id="Joanna",
+    output_path=Path("output.mp3"),
+    engine="neural"
+)
+
+# List voices
+voice_manager = VoiceManager(client)
+voices = voice_manager.list_voices(engine="neural", language="en")
+
+# Calculate cost
+cost = calculate_cost(character_count=5000, engine="neural")
+print(f"Estimated cost: ${cost:.4f}")
+```
+
+## Commands
+
+### synthesize
+Convert text to speech with full control over voice, engine, and output.
+
+```bash
+aws-polly-tts-tool synthesize [TEXT] [OPTIONS]
+  -s, --stdin         Read from stdin
+  -v, --voice TEXT    Voice ID (default: Joanna)
+  -o, --output PATH   Save to file
+  -f, --format TEXT   mp3, ogg_vorbis, pcm
+  -e, --engine TEXT   standard, neural, generative, long-form
+  --ssml              Treat input as SSML
+  --show-cost         Display cost estimate
+```
+
+### list-voices
+List and filter available Polly voices.
+
+```bash
+aws-polly-tts-tool list-voices [OPTIONS]
+  -e, --engine TEXT    Filter by engine
+  -l, --language TEXT  Filter by language
+  -g, --gender TEXT    Filter by gender
+```
+
+### list-engines
+Display all voice engines with features and pricing.
+
+```bash
+aws-polly-tts-tool list-engines
+```
+
+### billing
+Query AWS Cost Explorer for actual Polly usage costs.
+
+```bash
+aws-polly-tts-tool billing [OPTIONS]
+  -d, --days INT       Number of days (default: 30)
+  --start-date TEXT    Custom start date (YYYY-MM-DD)
+  --end-date TEXT      Custom end date (YYYY-MM-DD)
+```
+
+### pricing
+Show Polly pricing information and examples.
+
+```bash
+aws-polly-tts-tool pricing
+```
+
+### info
+Display AWS credentials and tool configuration.
+
+```bash
+aws-polly-tts-tool info
+```
+
+## Known Issues
+
+### pydub Python 3.13+ Compatibility
+
+**Issue**: The `pydub` library depends on Python's `audioop` module, which was removed in Python 3.13.
+
+**Impact**: Audio playback through speakers fails on Python 3.13+. File output (`--output`) works fine.
+
+**Workarounds**:
+1. **Use Python 3.12** (recommended)
+   ```bash
+   mise use python@3.12
+   uv tool install . --python 3.12
+   ```
+
+2. **Save to file instead of playback**
+   ```bash
+   # This works on any Python version
+   aws-polly-tts-tool synthesize "Hello" --output speech.mp3
+   ```
+
+3. **Future fix**: We plan to replace pydub with a Python 3.13+ compatible library (pygame or sounddevice)
+
+## Development
+
+### Setup
+
+```bash
+# Clone and setup
+git clone https://github.com/dnvriend/aws-polly-tts-tool.git
+cd aws-polly-tts-tool
+
+# Install with Python 3.12
+mise use python@3.12
+uv sync
+
+# Run quality checks
+make check
+```
+
+### Available Commands
+
+```bash
+make install       # Install dependencies
+make format        # Format with ruff
+make lint          # Lint with ruff
+make typecheck     # Type check with mypy
+make test          # Run tests with pytest
+make check         # Run all checks
+make pipeline      # Full pipeline
+make build         # Build package
+make clean         # Remove artifacts
+```
+
+### Architecture
 
 ```
 aws-polly-tts-tool/
-├── aws_polly_tts_tool/    # Main package
-│   ├── __init__.py
-│   ├── cli.py          # CLI entry point
-│   └── utils.py        # Utility functions
-├── tests/              # Test suite
-│   ├── __init__.py
-│   └── test_utils.py
-├── pyproject.toml      # Project configuration
-├── Makefile            # Development commands
-├── README.md           # This file
-├── LICENSE             # MIT License
-└── CLAUDE.md           # Development documentation
+├── aws_polly_tts_tool/
+│   ├── __init__.py           # Public API exports
+│   ├── cli.py                # CLI entry point
+│   ├── voices.py             # VoiceManager (dynamic API)
+│   ├── engines.py            # Engine metadata & validation
+│   ├── billing.py            # Cost calculations
+│   ├── utils.py              # Shared utilities
+│   ├── core/                 # Core library (CLI-independent)
+│   │   ├── client.py         # AWS client initialization
+│   │   ├── synthesize.py     # TTS functions
+│   │   └── cost_explorer.py  # Billing queries
+│   └── commands/             # CLI command implementations
+│       ├── synthesize_commands.py
+│       ├── voice_commands.py
+│       ├── engine_commands.py
+│       ├── billing_commands.py
+│       └── info_commands.py
+├── tests/
+├── pyproject.toml
+└── Makefile
 ```
 
-## Testing
+## Resources
 
-Run the test suite:
-
-```bash
-# Run all tests
-make test
-
-# Run tests with verbose output
-uv run pytest tests/ -v
-
-# Run specific test file
-uv run pytest tests/test_utils.py
-
-# Run with coverage
-uv run pytest tests/ --cov=aws_polly_tts_tool
-```
-
-## Contributing
-
-Contributions are welcome! Please follow these guidelines:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Run the full pipeline (`make pipeline`)
-5. Commit your changes (`git commit -m 'Add amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
-
-### Code Style
-
-- Follow PEP 8 guidelines
-- Use type hints for all functions
-- Write docstrings for public functions
-- Format code with `ruff`
-- Pass all linting and type checks
+- [Amazon Polly Documentation](https://docs.aws.amazon.com/polly/)
+- [Polly Pricing](https://aws.amazon.com/polly/pricing/)
+- [SSML Reference](https://docs.aws.amazon.com/polly/latest/dg/supportedtags.html)
+- [Boto3 Polly API](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/polly.html)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Author
 
 **Dennis Vriend**
-
 - GitHub: [@dnvriend](https://github.com/dnvriend)
-
-## Acknowledgments
-
-- Built with [Click](https://click.palletsprojects.com/) for CLI framework
-- Developed with [uv](https://github.com/astral-sh/uv) for fast Python tooling
 
 ---
 
-**Generated with AI**
+**Built with Claude Code**
 
-This project was generated using [Claude Code](https://www.anthropic.com/claude/code), an AI-powered development tool by [Anthropic](https://www.anthropic.com/). Claude Code assisted in creating the project structure, implementation, tests, documentation, and development tooling.
+This project was created using [Claude Code](https://www.anthropic.com/claude/code), featuring AI-assisted development with human review and testing.
 
-Made with ❤️ using Python 3.14
+Made with ❤️ and AI • Python 3.12+

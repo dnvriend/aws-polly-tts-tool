@@ -1,19 +1,59 @@
-"""CLI entry point for aws-polly-tts-tool.
+"""
+CLI entry point for AWS Polly TTS tool.
+
+WHY: Serves as the main command group that registers all CLI commands
+and provides the entry point for the tool. Uses Click's group pattern
+to organize commands in a flat structure for simplicity and discoverability.
 
 Note: This code was generated with assistance from AI coding tools
 and has been reviewed and tested by a human.
 """
 
-import click
+import warnings
 
-from aws_polly_tts_tool.utils import get_greeting
+# Suppress pydub's SyntaxWarnings (invalid escape sequences in pydub's code)
+warnings.filterwarnings("ignore", category=SyntaxWarning)
+
+import click  # noqa: E402
+
+from aws_polly_tts_tool.commands import (  # noqa: E402
+    billing,
+    info,
+    list_engines,
+    list_voices,
+    pricing,
+    synthesize,
+)
 
 
-@click.command()
+@click.group()
 @click.version_option(version="0.1.0")
 def main() -> None:
-    """A CLI that provides TTS using Amazon Polly"""
-    click.echo(get_greeting())
+    """AWS Polly TTS CLI - Professional text-to-speech synthesis.
+
+    Convert text to lifelike speech using Amazon Polly with support for
+    multiple engines, voices, and output formats.
+
+    \b
+    Quick Start:
+        aws-polly-tts-tool synthesize "Hello world"
+        aws-polly-tts-tool list-voices
+        aws-polly-tts-tool pricing
+
+    \b
+    Documentation:
+        https://github.com/yourusername/aws-polly-tts-tool
+    """
+    pass
+
+
+# Register commands
+main.add_command(synthesize)
+main.add_command(list_voices)
+main.add_command(list_engines)
+main.add_command(billing)
+main.add_command(pricing)
+main.add_command(info)
 
 
 if __name__ == "__main__":

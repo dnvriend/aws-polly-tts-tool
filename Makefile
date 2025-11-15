@@ -35,7 +35,7 @@ build: ## Build package
 	uv build
 
 install-global: ## Install globally with uv tool
-	uv tool install . --reinstall
+	uv tool install . --reinstall --python 3.12
 
 uninstall-global: ## Uninstall global installation
 	uv tool uninstall aws-polly-tts-tool
