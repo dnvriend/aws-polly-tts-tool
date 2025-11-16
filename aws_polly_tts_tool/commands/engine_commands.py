@@ -1,4 +1,17 @@
-"""Engine listing CLI commands."""
+"""
+Engine listing CLI commands.
+
+Provides CLI interface for discovering AWS Polly voice engines and their
+characteristics. This module displays engine metadata including pricing,
+technology type, character limits, and recommended use cases to help users
+select the appropriate engine for their TTS needs.
+
+The tabular output format enables both human readability and programmatic
+parsing, supporting informed decision-making about cost-quality tradeoffs.
+
+Note: This code was generated with assistance from AI coding tools
+and has been reviewed and tested by a human.
+"""
 
 import click
 

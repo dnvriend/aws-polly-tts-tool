@@ -1,7 +1,7 @@
 """
 CLI command implementations for AWS Polly TTS tool.
 
-WHY: This package contains all Click command definitions that wrap the core
+This package contains all Click command definitions that wrap the core
 library functions with CLI-specific concerns like argument parsing, error
 formatting, and user output. By separating command implementations from core
 logic, we maintain a clean architecture where business logic remains testable

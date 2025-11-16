@@ -1,7 +1,7 @@
 """
 Cost calculation utilities for AWS Polly TTS.
 
-WHY: Provides immediate cost estimates based on character counts to give
+Provides immediate cost estimates based on character counts to give
 users transparency into Polly pricing before and after synthesis operations.
 This complements the Cost Explorer integration by offering instant feedback
 without requiring API calls or billing data delays.
@@ -21,7 +21,7 @@ def calculate_cost(character_count: int, engine: str) -> float:
     """
     Calculate estimated cost for synthesizing text.
 
-    WHY: Provides instant cost feedback based on character count and engine
+    Provides instant cost feedback based on character count and engine
     selection. This helps users understand the financial impact of their TTS
     operations and make informed choices about engine selection.
 
@@ -56,7 +56,7 @@ def format_cost_summary(character_count: int, engine: str) -> str:
     """
     Format a human-readable cost summary.
 
-    WHY: Provides consistent cost display format across CLI commands,
+    Provides consistent cost display format across CLI commands,
     showing both character count and calculated cost with engine context.
     This gives users complete transparency into what they're being charged for.
 
@@ -88,7 +88,7 @@ def estimate_batch_cost(texts: list[str], engine: str) -> dict[str, float | int]
     """
     Estimate cost for batch processing multiple texts.
 
-    WHY: Enables cost forecasting for batch TTS operations, helping users
+    Enables cost forecasting for batch TTS operations, helping users
     plan budgets and choose optimal engines before committing to large-scale
     synthesis jobs.
 
@@ -123,7 +123,7 @@ def compare_engine_costs(character_count: int) -> dict[str, float]:
     """
     Compare costs across all engines for a given character count.
 
-    WHY: Helps users make informed engine selection by showing cost
+    Helps users make informed engine selection by showing cost
     differences side-by-side. This is especially useful for large batches
     where engine choice significantly impacts total cost.
 

@@ -19,6 +19,7 @@ aws-polly-tts-tool/
 │   ├── engines.py            # Engine metadata, validation, pricing
 │   ├── billing.py            # Cost calculation utilities
 │   ├── utils.py              # Shared utilities (formatting, validation)
+│   ├── logging_config.py     # Multi-level verbosity logging (NEW in v0.2.0)
 │   ├── core/                 # Core library (CLI-independent)
 │   │   ├── __init__.py
 │   │   ├── client.py         # boto3 client initialization
@@ -66,6 +67,12 @@ aws-polly-tts-tool/
    - WHY-focused docstrings at all levels (module, class, function)
    - Explains reasoning, not just what the code does
    - Enables semantic code search and AI-assisted development
+
+6. **Multi-Level Verbosity** (v0.2.0+)
+   - Progressive logging detail: `-V` (INFO), `-VV` (DEBUG), `-VVV` (TRACE)
+   - Logs to stderr, data to stdout (Unix-style composability)
+   - Enables debugging without code changes
+   - Full AWS SDK visibility at TRACE level
 
 ## Development Commands
 
@@ -181,6 +188,100 @@ voices = vm.list_voices(engine="neural")
 cost = calculate_cost(char_count, "neural")
 ```
 
+## Logging Architecture (v0.2.0+)
+
+### Overview
+
+Multi-level verbosity implementation using Python's standard `logging` module, enabling progressive debug detail without code changes.
+
+### Logging Module: `logging_config.py`
+
+**Location**: `aws_polly_tts_tool/logging_config.py`
+
+**Key Functions**:
+- `setup_logging(verbose_count: int)` - Configure logging based on verbosity level
+- `get_logger(name: str)` - Get logger instance for a module
+
+**Verbosity Mapping**:
+```python
+verbose_count == 0  → WARNING  # Quiet (errors/warnings only)
+verbose_count == 1  → INFO     # High-level operations
+verbose_count >= 2  → DEBUG    # Detailed operations
+verbose_count >= 3  → DEBUG    # + boto3/botocore logging (TRACE)
+```
+
+### CLI Integration
+
+All commands accept `-V`/`--verbose` with `count=True`:
+
+```python
+@click.option(
+    "-V",
+    "--verbose",
+    count=True,
+    help="Enable verbose output (-V INFO, -VV DEBUG, -VVV TRACE)",
+)
+def command(..., verbose: int) -> None:
+    setup_logging(verbose)  # First line in command
+    logger.info("High-level operation")
+    logger.debug("Detailed step")
+```
+
+**Note**: We use `-V` (uppercase) instead of `-v` because `-v` conflicts with the `--voice` option in the synthesize command.
+
+### Logging Best Practices
+
+**When to use each level**:
+- `logger.warning()` - Critical issues, always shown
+- `logger.info()` - High-level operations (voice selection, file operations)
+- `logger.debug()` - Detailed steps (validation, character counts, API calls)
+- `logger.error()` - Error messages (always shown)
+- `logger.debug("...", exc_info=True)` - Full tracebacks (only at DEBUG+)
+
+**Example**:
+```python
+logger = get_logger(__name__)
+
+def synthesize(...):
+    logger.info(f"Using voice: {voice_id} ({engine} engine)")
+    logger.debug(f"Validating engine: {engine}")
+    logger.debug(f"Synthesized {char_count} characters")
+
+    try:
+        # operation
+    except Exception as e:
+        logger.error(f"Operation failed: {e}")
+        logger.debug("Full traceback:", exc_info=True)
+```
+
+### Output Streams
+
+**Critical design principle**:
+- **Logs → stderr** (`logging.basicConfig(stream=sys.stderr)`)
+- **Data → stdout** (`click.echo()` without `err=True`)
+
+**Why**: Enables Unix-style composition:
+```bash
+aws-polly-tts-tool list-voices -V | grep British  # Logs to stderr, data to stdout
+```
+
+### AWS SDK Logging
+
+At `-VVV` (TRACE level), boto3/botocore loggers are enabled:
+
+```python
+if verbose_count >= 3:
+    logging.getLogger("boto3").setLevel(logging.DEBUG)
+    logging.getLogger("botocore").setLevel(logging.DEBUG)
+    logging.getLogger("botocore.credentials").setLevel(logging.DEBUG)
+```
+
+Shows:
+- AWS credential resolution
+- HTTP requests/responses
+- API operation details
+- Service endpoint resolution
+
 ## Code Standards
 
 ### Type Hints
@@ -195,12 +296,16 @@ def function(param: str, optional: int | None = None) -> dict[str, Any]:
 
 ### Docstrings (Code-RAG Format)
 
+**Code-RAG Optimized**: All docstrings explain reasoning and design decisions in natural language for semantic code search and AI-assisted development.
+
 ```python
 """
 Module/function description.
 
-WHY: Explain the reasoning and design decisions here.
-This helps with semantic code search and AI-assisted development.
+Explain the reasoning and design decisions here in natural language.
+This helps with semantic code search and AI-assisted development by
+providing context about WHY the code exists and HOW it fits into the
+broader architecture.
 
 Args:
     param: Description
@@ -212,6 +317,13 @@ Raises:
     ValueError: When...
 """
 ```
+
+**Key principles**:
+- Natural language (no "WHY:" prefix - removed in v0.2.0)
+- Explain intent and reasoning, not just implementation
+- Focus on architectural context and design decisions
+- Support semantic search and AI code understanding
+- All 17 modules have comprehensive Code-RAG docstrings
 
 ### Error Messages
 

@@ -1,7 +1,7 @@
 """
 AWS Polly client initialization and credential validation.
 
-WHY: Centralizes boto3 Polly client creation with comprehensive error
+Centralizes boto3 Polly client creation with comprehensive error
 handling and credential validation. This module ensures AWS credentials
 are properly configured before attempting TTS operations, providing
 clear, actionable error messages when credentials are missing or invalid.
@@ -24,7 +24,7 @@ def get_polly_client(region: str | None = None) -> Any:
     """
     Initialize and return AWS Polly client.
 
-    WHY: Provides a consistent entry point for creating Polly clients with
+    Provides a consistent entry point for creating Polly clients with
     optional region override. This function handles AWS SDK initialization
     and raises clear exceptions if credentials are not configured, avoiding
     confusing boto3 errors downstream.
@@ -101,7 +101,7 @@ def test_aws_credentials() -> dict[str, str]:
     """
     Test AWS credentials and return identity information.
 
-    WHY: Provides diagnostic information about the current AWS identity for
+    Provides diagnostic information about the current AWS identity for
     troubleshooting authentication issues. This function helps users verify
     they're using the correct AWS account and IAM credentials.
 

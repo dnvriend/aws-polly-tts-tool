@@ -1,7 +1,7 @@
 """
 CLI entry point for AWS Polly TTS tool.
 
-WHY: Serves as the main command group that registers all CLI commands
+Serves as the main command group that registers all CLI commands
 and provides the entry point for the tool. Uses Click's group pattern
 to organize commands in a flat structure for simplicity and discoverability.
 
@@ -27,7 +27,7 @@ from aws_polly_tts_tool.commands import (  # noqa: E402
 
 
 @click.group()
-@click.version_option(version="0.1.0")
+@click.version_option(version="0.2.0")
 def main() -> None:
     """AWS Polly TTS CLI - Professional text-to-speech synthesis.
 

@@ -1,7 +1,7 @@
 """
 AWS Polly voice engine metadata and validation.
 
-WHY: Centralizes engine-specific information (pricing, features, limits) to
+Centralizes engine-specific information (pricing, features, limits) to
 provide consistent validation and helpful error messages across the CLI. By
 maintaining engine metadata in one place, we ensure users select appropriate
 engines for their use cases and understand the cost implications.
@@ -22,7 +22,7 @@ class EngineInfo:
     """
     Metadata for a Polly voice engine.
 
-    WHY: Encapsulates all engine-specific information in a type-safe structure
+    Encapsulates all engine-specific information in a type-safe structure
     that's easy to query and display. Frozen dataclass ensures immutability
     since engine specs are fixed and should not change at runtime.
 
@@ -132,7 +132,7 @@ def validate_engine(engine_id: str) -> str:
     """
     Validate and normalize engine ID.
 
-    WHY: Ensures users specify valid engines before making API calls, providing
+    Ensures users specify valid engines before making API calls, providing
     clear, actionable error messages that list available options. Normalizes
     input to lowercase for case-insensitive matching.
 
@@ -168,7 +168,7 @@ def get_engine_info(engine_id: str) -> EngineInfo:
     """
     Get metadata for a specific engine.
 
-    WHY: Provides type-safe access to engine information for cost calculations,
+    Provides type-safe access to engine information for cost calculations,
     validation, and user guidance. Validates engine ID before returning info.
 
     Args:
@@ -192,7 +192,7 @@ def list_all_engines() -> list[tuple[str, EngineInfo]]:
     """
     Get all available engines sorted by quality/cost.
 
-    WHY: Provides ordered list of engines for CLI display, sorted to present
+    Provides ordered list of engines for CLI display, sorted to present
     options from basic (standard) to premium (long-form), helping users
     understand the progression of quality and cost.
 

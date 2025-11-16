@@ -1,7 +1,7 @@
 """
 AWS Polly TTS Tool - Professional text-to-speech CLI and library.
 
-WHY: This package provides both CLI and programmatic access to AWS Polly
+This package provides both CLI and programmatic access to AWS Polly
 text-to-speech capabilities. By exporting core functions and classes, we
 enable users to integrate Polly TTS into their own applications while
 maintaining the convenience of a command-line interface.
@@ -20,7 +20,7 @@ import warnings
 # WHY: pydub has invalid escape sequences in regex patterns that trigger warnings
 warnings.filterwarnings("ignore", category=SyntaxWarning)
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 # Core functionality
 # Billing/cost utilities

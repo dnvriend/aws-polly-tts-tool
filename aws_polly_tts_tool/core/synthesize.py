@@ -1,7 +1,7 @@
 """
 Core text-to-speech synthesis functions for AWS Polly.
 
-WHY: This module provides the fundamental TTS operations - converting text
+This module provides the fundamental TTS operations - converting text
 to audio, playing through speakers, and saving to files. By keeping these
 functions pure and CLI-independent, we enable both command-line and
 programmatic usage while maintaining testability.
@@ -40,7 +40,7 @@ def synthesize_audio(
     """
     Synthesize text to audio using AWS Polly.
 
-    WHY: This is the core TTS operation that streams audio directly from Polly
+    This is the core TTS operation that streams audio directly from Polly
     without disk I/O for optimal performance. Returns both audio bytes and
     character count to enable cost tracking and billing transparency.
 
@@ -128,7 +128,7 @@ def play_speech(
     """
     Synthesize text and play through system speakers.
 
-    WHY: Provides immediate audio feedback for interactive TTS use cases
+    Provides immediate audio feedback for interactive TTS use cases
     without requiring file management. Uses pydub for cross-platform audio
     playback, supporting macOS, Linux, and Windows.
 
@@ -192,7 +192,7 @@ def save_speech(
     """
     Synthesize text and save audio to file.
 
-    WHY: Enables caching synthesized audio for reuse, reducing API costs
+    Enables caching synthesized audio for reuse, reducing API costs
     and latency for frequently played content. Creates parent directories
     automatically to simplify file management.
 
@@ -248,7 +248,7 @@ def read_from_stdin() -> str:
     """
     Read text from stdin with validation.
 
-    WHY: Enables piping text from other commands and tools, supporting
+    Enables piping text from other commands and tools, supporting
     Unix-style composability. Validates that stdin is being piped (not
     interactive terminal) and that content is non-empty, providing clear
     error messages for common mistakes.

@@ -1,7 +1,7 @@
 """
 Voice management for AWS Polly TTS.
 
-WHY: This module provides dynamic voice discovery and selection to ensure
+This module provides dynamic voice discovery and selection to ensure
 users always have access to the latest Polly voices without manual updates.
 The VoiceManager fetches voice metadata directly from the Polly API, enabling
 filtering by engine, language, and gender for flexible voice selection.
@@ -23,7 +23,7 @@ class VoiceProfile:
     """
     AWS Polly voice profile with metadata.
 
-    WHY: Type-safe representation of voice information that includes all
+    Type-safe representation of voice information that includes all
     relevant attributes for voice selection and filtering. This structure
     makes voice data easy to work with in both CLI and library contexts.
 
@@ -50,7 +50,7 @@ class VoiceManager:
     """
     Manages AWS Polly voice discovery and selection.
 
-    WHY: Centralizes voice lookup logic to provide consistent voice resolution
+    Centralizes voice lookup logic to provide consistent voice resolution
     across CLI commands and library usage. By fetching voices dynamically from
     the API, this class ensures users can access newly released voices without
     tool updates.

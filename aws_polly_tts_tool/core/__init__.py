@@ -1,7 +1,7 @@
 """
 Core library for AWS Polly TTS operations.
 
-WHY: This package contains the core TTS functionality independent of CLI
+This package contains the core TTS functionality independent of CLI
 concerns. By separating business logic from command-line interface code,
 we enable programmatic usage of the library while maintaining a clean
 architecture that's easy to test and extend.

@@ -1,6 +1,6 @@
 [project]
 name = "aws-polly-tts-tool"
-version = "0.1.0"
+version = "0.2.0"
 description = "A CLI that provides TTS using Amazon Polly"
 requires-python = ">=3.12"
 dependencies = [

@@ -1,7 +1,7 @@
 """
 AWS Cost Explorer queries for Polly billing data.
 
-WHY: Provides accurate billing information by querying AWS's Cost Explorer
+Provides accurate billing information by querying AWS's Cost Explorer
 API, enabling users to track actual Polly usage costs across different
 engines and time periods. This complements character-based cost estimates
 with real billing data for financial planning and budget monitoring.
@@ -29,7 +29,7 @@ def get_polly_costs(
     """
     Query AWS Cost Explorer for Polly usage costs.
 
-    WHY: Retrieves actual billing data from AWS to provide accurate cost
+    Retrieves actual billing data from AWS to provide accurate cost
     tracking for Polly TTS usage. This enables budget monitoring, cost
     attribution, and financial planning based on real AWS charges rather
     than estimates.
@@ -162,7 +162,7 @@ def _map_usage_type_to_engine(usage_type: str) -> str:
     """
     Map AWS usage type to Polly engine category.
 
-    WHY: AWS reports usage types with technical identifiers that need to be
+    AWS reports usage types with technical identifiers that need to be
     mapped to user-friendly engine names. This helper provides consistent
     categorization across different AWS usage type formats.
 

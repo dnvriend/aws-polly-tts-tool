@@ -1,4 +1,18 @@
-"""System information CLI commands."""
+"""
+System information CLI commands.
+
+Provides CLI interface for displaying AWS Polly tool configuration and
+credential status. This module offers a diagnostic command to verify AWS
+authentication, display available engines and formats, and show helpful
+command examples.
+
+The info command serves as a health check and quick reference, particularly
+useful for troubleshooting authentication issues and discovering tool
+capabilities without consulting external documentation.
+
+Note: This code was generated with assistance from AI coding tools
+and has been reviewed and tested by a human.
+"""
 
 import sys
 

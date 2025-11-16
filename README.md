@@ -21,6 +21,7 @@ Professional AWS Polly TTS CLI and library for text-to-speech synthesis with age
   - [Engine Selection](#engine-selection)
   - [SSML Support](#ssml-support)
   - [Cost Tracking](#cost-tracking)
+  - [Verbosity and Debugging](#verbosity-and-debugging)
 - [Library Usage](#library-usage)
 - [Commands](#commands)
 - [Known Issues](#known-issues)
@@ -245,6 +246,57 @@ aws-polly-tts-tool billing --start-date 2025-01-01 --end-date 2025-01-31
 aws-polly-tts-tool billing --days 7
 ```
 
+### Verbosity and Debugging
+
+Multi-level verbosity for progressive debugging detail:
+
+```bash
+# Default: No verbose output (errors/warnings only)
+aws-polly-tts-tool synthesize "Hello world" --output test.mp3
+
+# -V: INFO level (high-level operations)
+aws-polly-tts-tool synthesize "Hello world" -V --output test.mp3
+[INFO] Using voice: Joanna (neural engine)
+[INFO] Synthesizing audio to file: test.mp3
+
+# -VV: DEBUG level (detailed operations, validation, character counts)
+aws-polly-tts-tool synthesize "Hello world" -VV --output test.mp3
+[DEBUG] Validating engine: neural
+[DEBUG] Validating output format: mp3
+[DEBUG] Initializing AWS Polly client
+[DEBUG] Resolving voice ID for: Joanna
+[INFO] Using voice: Joanna (neural engine)
+[INFO] Synthesizing audio to file: test.mp3
+[DEBUG] Synthesized 11 characters
+
+# -VVV: TRACE level (full AWS SDK details, API requests/responses)
+aws-polly-tts-tool synthesize "Hello world" -VVV --output test.mp3
+[DEBUG] Validating engine: neural
+[DEBUG] Validating output format: mp3
+[DEBUG] Initializing AWS Polly client
+[DEBUG] Looking for credentials via: env
+[DEBUG] Looking for credentials via: shared-credentials-file
+[INFO] Found credentials in shared credentials file: ~/.aws/credentials
+[DEBUG] Event creating-client-class.polly: calling handler
+[DEBUG] Starting new HTTPS connection (1): polly.eu-central-1.amazonaws.com:443
+[DEBUG] https://polly.eu-central-1.amazonaws.com:443 "POST /v1/speech HTTP/1.1" 200 None
+[INFO] Using voice: Joanna (neural engine)
+[INFO] Synthesizing audio to file: test.mp3
+[DEBUG] Synthesized 11 characters
+
+# Works with all commands
+aws-polly-tts-tool list-voices -V --engine neural
+aws-polly-tts-tool billing -VV --days 7
+```
+
+**Verbosity Levels**:
+- **Default**: Errors and warnings only - clean output
+- **`-V`** (INFO): High-level operations (voice selection, file operations)
+- **`-VV`** (DEBUG): Detailed steps (validation, API calls, character counts)
+- **`-VVV`** (TRACE): Full AWS SDK internals (credentials, HTTP requests, boto3 events)
+
+**Note**: All log output goes to stderr, keeping stdout clean for data/piping.
+
 ## Library Usage
 
 Import and use as a Python library:
@@ -296,12 +348,14 @@ Convert text to speech with full control over voice, engine, and output.
 ```bash
 aws-polly-tts-tool synthesize [TEXT] [OPTIONS]
   -s, --stdin         Read from stdin
-  -v, --voice TEXT    Voice ID (default: Joanna)
+  --voice TEXT        Voice ID (default: Joanna)
   -o, --output PATH   Save to file
   -f, --format TEXT   mp3, ogg_vorbis, pcm
   -e, --engine TEXT   standard, neural, generative, long-form
   --ssml              Treat input as SSML
   --show-cost         Display cost estimate
+  -r, --region TEXT   AWS region override
+  -V, --verbose       Verbosity (-V, -VV, -VVV for progressive detail)
 ```
 
 ### list-voices
@@ -312,6 +366,8 @@ aws-polly-tts-tool list-voices [OPTIONS]
   -e, --engine TEXT    Filter by engine
   -l, --language TEXT  Filter by language
   -g, --gender TEXT    Filter by gender
+  -r, --region TEXT    AWS region override
+  -V, --verbose        Verbosity (-V, -VV, -VVV for progressive detail)
 ```
 
 ### list-engines
@@ -329,6 +385,8 @@ aws-polly-tts-tool billing [OPTIONS]
   -d, --days INT       Number of days (default: 30)
   --start-date TEXT    Custom start date (YYYY-MM-DD)
   --end-date TEXT      Custom end date (YYYY-MM-DD)
+  -r, --region TEXT    AWS region override
+  -V, --verbose        Verbosity (-V, -VV, -VVV for progressive detail)
 ```
 
 ### pricing

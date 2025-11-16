@@ -1,7 +1,7 @@
 """
 Shared utility functions for AWS Polly TTS tool.
 
-WHY: Provides common functionality used across multiple modules,
+Provides common functionality used across multiple modules,
 including output formatting, validation, and helper functions.
 Centralizing these utilities ensures consistency and reduces code
 duplication across CLI commands and core modules.
@@ -15,7 +15,7 @@ def validate_output_format(format_name: str) -> str:
     """
     Validate and normalize audio output format.
 
-    WHY: Ensures users specify valid Polly output formats before making
+    Ensures users specify valid Polly output formats before making
     API calls, providing clear error messages with available options.
     Normalizes input to lowercase for case-insensitive matching.
 
@@ -65,7 +65,7 @@ def truncate_text(text: str, max_length: int = 50) -> str:
     """
     Truncate text for display with ellipsis.
 
-    WHY: Provides consistent text truncation for log messages and output,
+    Provides consistent text truncation for log messages and output,
     preventing long texts from cluttering terminal display while still
     showing enough context to identify content.
 
@@ -89,7 +89,7 @@ def format_table_row(columns: list[str], widths: list[int]) -> str:
     """
     Format a table row with fixed column widths.
 
-    WHY: Provides consistent table formatting across CLI output,
+    Provides consistent table formatting across CLI output,
     ensuring aligned columns for readable voice/engine listings.
 
     Args:
@@ -118,7 +118,7 @@ def format_file_size(bytes_count: int) -> str:
     """
     Format byte count as human-readable file size.
 
-    WHY: Makes audio file sizes easier to understand by converting
+    Makes audio file sizes easier to understand by converting
     bytes to appropriate units (KB, MB) for user display.
 
     Args:
