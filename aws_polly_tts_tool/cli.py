@@ -18,6 +18,7 @@ import click  # noqa: E402
 
 from aws_polly_tts_tool.commands import (  # noqa: E402
     billing,
+    completion,
     info,
     list_engines,
     list_voices,
@@ -54,6 +55,7 @@ main.add_command(list_engines)
 main.add_command(billing)
 main.add_command(pricing)
 main.add_command(info)
+main.add_command(completion)
 
 
 if __name__ == "__main__":

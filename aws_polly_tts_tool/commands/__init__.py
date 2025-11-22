@@ -15,6 +15,7 @@ and has been reviewed and tested by a human.
 """
 
 from aws_polly_tts_tool.commands.billing_commands import billing, pricing
+from aws_polly_tts_tool.commands.completion_commands import completion
 from aws_polly_tts_tool.commands.engine_commands import list_engines
 from aws_polly_tts_tool.commands.info_commands import info
 from aws_polly_tts_tool.commands.synthesize_commands import synthesize
@@ -27,4 +28,5 @@ __all__ = [
     "billing",
     "pricing",
     "info",
+    "completion",
 ]

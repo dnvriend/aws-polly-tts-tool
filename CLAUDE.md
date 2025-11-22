@@ -92,16 +92,20 @@ make check
 ### Available Commands
 
 ```bash
-make install          # Install dependencies with uv sync
-make format           # Format code with ruff
-make lint             # Lint with ruff
-make typecheck        # Type check with mypy (strict mode)
-make test             # Run pytest
-make check            # Run all checks (lint + typecheck + test)
-make pipeline         # Full pipeline (format + check + build + install-global)
-make build            # Build wheel and source dist
-make install-global   # Install globally with uv tool
-make clean            # Remove build artifacts
+make install              # Install dependencies with uv sync
+make format               # Format code with ruff
+make lint                 # Lint with ruff
+make typecheck            # Type check with mypy (strict mode)
+make test                 # Run pytest
+make security-bandit      # Run bandit security linter
+make security-pip-audit   # Run pip-audit for vulnerabilities
+make security-gitleaks    # Run gitleaks secret scanner
+make security             # Run all security checks
+make check                # Run all checks (lint + typecheck + test + security)
+make pipeline             # Full pipeline (format + check + build + install-global)
+make build                # Build wheel and source dist
+make install-global       # Install globally with uv tool
+make clean                # Remove build artifacts
 ```
 
 ### Quality Checks
@@ -111,6 +115,9 @@ All code must pass:
 - ✅ `ruff check .` - Linting
 - ✅ `mypy aws_polly_tts_tool --strict` - Type checking
 - ✅ `pytest tests/` - Unit tests
+- ✅ `bandit -r aws_polly_tts_tool` - Security linting
+- ✅ `pip-audit` - Dependency vulnerability scanning
+- ✅ `gitleaks detect` - Secret detection (requires separate install)
 
 ## CLI Commands
 
@@ -377,6 +384,66 @@ Keep version consistent across:
 - `pyproject.toml` `[project] version`
 - `cli.py` `@click.version_option(version="...")`
 - `__init__.py` `__version__ = "..."`
+
+## Security
+
+### Integrated Security Tools
+
+The project integrates three security tools into the development pipeline:
+
+1. **bandit** - Python security linter
+   - Scans code for common security issues (SQL injection, hardcoded passwords, unsafe functions)
+   - Configuration in `pyproject.toml` excludes test directories and skips B101 (assert_used)
+   - Run with: `make security-bandit`
+
+2. **pip-audit** - Dependency vulnerability scanner
+   - Checks Python dependencies for known CVEs from PyPI
+   - No configuration needed (uses uv's dependency resolution)
+   - Run with: `make security-pip-audit`
+
+3. **gitleaks** - Secret detection
+   - Scans git history for leaked credentials, API keys, and secrets
+   - Configuration in `.gitleaks.toml` with allowlist for false positives
+   - **Requires separate installation**: `brew install gitleaks` (macOS) or from [GitHub releases](https://github.com/gitleaks/gitleaks/releases)
+   - Run with: `make security-gitleaks`
+
+### Running Security Checks
+
+```bash
+# Run individual security tools
+make security-bandit
+make security-pip-audit
+make security-gitleaks
+
+# Run all security checks
+make security
+
+# Security checks are included in pipeline
+make check      # Includes security
+make pipeline   # Includes security
+```
+
+### Security Configuration Files
+
+- `pyproject.toml` - Bandit configuration
+  - Excludes: tests, .venv, venv directories
+  - Skips: B101 (assert_used - common in tests)
+
+- `.gitleaks.toml` - Gitleaks configuration
+  - Uses default gitleaks rules
+  - Allowlist for test fixtures and example values
+  - Excludes test files, markdown, and documentation
+
+### Handling Security Findings
+
+**False Positives**:
+- Bandit: Add `# nosec` comment to suppress, or update `pyproject.toml` to skip checks
+- Gitleaks: Update `.gitleaks.toml` allowlist with regex patterns
+
+**Real Issues**:
+- Address security findings before committing
+- Pipeline will fail if security checks detect issues
+- Review and fix issues, then re-run `make security`
 
 ## Known Issues & Future Fixes
 

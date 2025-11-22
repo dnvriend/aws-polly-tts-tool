@@ -1,3 +1,6 @@
+<div align="center">
+  <img src=".github/assets/logo.png" alt="AWS Polly TTS Tool Logo" width="256">
+
 # aws-polly-tts-tool
 
 [![Python Version](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
@@ -7,6 +10,8 @@
 [![Built with Claude Code](https://img.shields.io/badge/Built_with-Claude_Code-5A67D8.svg)](https://www.anthropic.com/claude/code)
 
 Professional AWS Polly TTS CLI and library for text-to-speech synthesis with agent-friendly design.
+
+</div>
 
 ## Table of Contents
 
@@ -22,6 +27,7 @@ Professional AWS Polly TTS CLI and library for text-to-speech synthesis with age
   - [SSML Support](#ssml-support)
   - [Cost Tracking](#cost-tracking)
   - [Verbosity and Debugging](#verbosity-and-debugging)
+  - [Shell Completion](#shell-completion)
 - [Library Usage](#library-usage)
 - [Commands](#commands)
 - [Known Issues](#known-issues)
@@ -297,6 +303,39 @@ aws-polly-tts-tool billing -VV --days 7
 
 **Note**: All log output goes to stderr, keeping stdout clean for data/piping.
 
+### Shell Completion
+
+Enable tab completion for bash, zsh, or fish shells to autocomplete commands, options, and arguments:
+
+```bash
+# View installation instructions
+aws-polly-tts-tool completion --help
+
+# Bash - add to ~/.bashrc for persistent completion
+eval "$(aws-polly-tts-tool completion bash)"
+
+# Zsh - add to ~/.zshrc for persistent completion
+eval "$(aws-polly-tts-tool completion zsh)"
+
+# Fish - one-time installation
+aws-polly-tts-tool completion fish > ~/.config/fish/completions/aws-polly-tts-tool.fish
+
+# File-based installation (recommended for better performance)
+aws-polly-tts-tool completion bash > ~/.aws-polly-tts-tool-complete.bash
+echo 'source ~/.aws-polly-tts-tool-complete.bash' >> ~/.bashrc
+```
+
+After installation, restart your shell or source the config file:
+```bash
+source ~/.bashrc  # for bash
+source ~/.zshrc   # for zsh
+```
+
+Shell completion enables:
+- **Command completion**: Type `aws-polly-tts-tool <TAB>` to see all commands
+- **Option completion**: Type `--<TAB>` to see available options
+- **Value completion**: Auto-complete for choices like engines (standard, neural, generative)
+
 ## Library Usage
 
 Import and use as a Python library:
@@ -403,6 +442,24 @@ Display AWS credentials and tool configuration.
 aws-polly-tts-tool info
 ```
 
+### completion
+Generate shell completion scripts for bash, zsh, or fish.
+
+```bash
+aws-polly-tts-tool completion [bash|zsh|fish]
+
+# Install for bash
+eval "$(aws-polly-tts-tool completion bash)"
+
+# Install for zsh
+eval "$(aws-polly-tts-tool completion zsh)"
+
+# Install for fish
+aws-polly-tts-tool completion fish > ~/.config/fish/completions/aws-polly-tts-tool.fish
+```
+
+See [Shell Completion](#shell-completion) section for detailed installation instructions.
+
 ## Known Issues
 
 ### pydub Python 3.13+ Compatibility
@@ -446,16 +503,30 @@ make check
 ### Available Commands
 
 ```bash
-make install       # Install dependencies
-make format        # Format with ruff
-make lint          # Lint with ruff
-make typecheck     # Type check with mypy
-make test          # Run tests with pytest
-make check         # Run all checks
-make pipeline      # Full pipeline
-make build         # Build package
-make clean         # Remove artifacts
+make install              # Install dependencies
+make format               # Format with ruff
+make lint                 # Lint with ruff
+make typecheck            # Type check with mypy
+make test                 # Run tests with pytest
+make security-bandit      # Run bandit security linter
+make security-pip-audit   # Run pip-audit for vulnerabilities
+make security-gitleaks    # Run gitleaks secret scanner
+make security             # Run all security checks
+make check                # Run all checks (lint, typecheck, test, security)
+make pipeline             # Full pipeline (format, lint, typecheck, test, security, build, install)
+make build                # Build package
+make clean                # Remove artifacts
 ```
+
+### Security Checks
+
+The project includes three security tools integrated into the development pipeline:
+
+- **bandit** - Python security linter that scans for common security issues
+- **pip-audit** - Dependency vulnerability scanner checking for known CVEs
+- **gitleaks** - Secret detection tool that scans git history for leaked credentials
+
+**Note**: gitleaks requires separate installation via `brew install gitleaks` (macOS) or from [GitHub releases](https://github.com/gitleaks/gitleaks/releases)
 
 ### Architecture
 
